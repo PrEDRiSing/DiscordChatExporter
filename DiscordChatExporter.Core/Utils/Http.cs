@@ -52,7 +52,7 @@ public static class Http
                     ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
                         .Handle<Exception>(IsRetryableException)
                         .HandleResult(m => IsRetryableStatusCode(m.StatusCode)),
-                    MaxRetryAttempts = 8,
+                    MaxRetryAttempts = 15,
                     DelayGenerator = args =>
                     {
                         // If rate-limited, use retry-after header as the guide.
@@ -61,12 +61,12 @@ public static class Http
                         {
                             // Add some buffer just in case
                             return ValueTask.FromResult<TimeSpan?>(
-                                retryAfter + TimeSpan.FromSeconds(1)
+                                retryAfter + TimeSpan.FromSeconds(5)
                             );
                         }
 
                         return ValueTask.FromResult<TimeSpan?>(
-                            TimeSpan.FromSeconds(Math.Pow(2, args.AttemptNumber) + 1)
+                            TimeSpan.FromSeconds(Math.Pow(2, args.AttemptNumber) + 5)
                         );
                     }
                 }
