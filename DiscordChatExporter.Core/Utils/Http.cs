@@ -37,9 +37,9 @@ public static class Http
                 new RetryStrategyOptions
                 {
                     ShouldHandle = new PredicateBuilder().Handle<Exception>(IsRetryableException),
-                    MaxRetryAttempts = 4,
+                    MaxRetryAttempts = 11,
                     BackoffType = DelayBackoffType.Exponential,
-                    Delay = TimeSpan.FromSeconds(1),
+                    Delay = TimeSpan.FromSeconds(5),
                 }
             )
             .Build();
@@ -52,7 +52,7 @@ public static class Http
                     ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
                         .Handle<Exception>(IsRetryableException)
                         .HandleResult(m => IsRetryableStatusCode(m.StatusCode)),
-                    MaxRetryAttempts = 8,
+                    MaxRetryAttempts = 15,
                     DelayGenerator = args =>
                     {
                         // If rate-limited, use retry-after header as the guide.
@@ -66,7 +66,7 @@ public static class Http
                         }
 
                         return ValueTask.FromResult<TimeSpan?>(
-                            TimeSpan.FromSeconds(Math.Pow(2, args.AttemptNumber) + 1)
+                            TimeSpan.FromSeconds(Math.Pow(2, args.AttemptNumber) + 5)
                         );
                     },
                 }
