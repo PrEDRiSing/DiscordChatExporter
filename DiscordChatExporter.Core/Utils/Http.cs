@@ -37,9 +37,9 @@ public static class Http
                 new RetryStrategyOptions
                 {
                     ShouldHandle = new PredicateBuilder().Handle<Exception>(IsRetryableException),
-                    MaxRetryAttempts = 4,
+                    MaxRetryAttempts = 8,
                     BackoffType = DelayBackoffType.Exponential,
-                    Delay = TimeSpan.FromSeconds(1),
+                    Delay = TimeSpan.FromSeconds(5),
                 }
             )
             .Build();
@@ -61,7 +61,7 @@ public static class Http
                         {
                             // Add some buffer just in case
                             return ValueTask.FromResult<TimeSpan?>(
-                                retryAfter + TimeSpan.FromSeconds(1)
+                                retryAfter + TimeSpan.FromSeconds(5)
                             );
                         }
 
